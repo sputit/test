@@ -1,0 +1,6 @@
+<%= link_to "Catalogue", catalogue_path, { :class=>"w3-bar-item w3-button" } %>
+
+ #<%= link_to "Catalogue", '/catalogue', { :class=>"w3-bar-item w3-button" } %>
+    #<%= link_to "Catalogue", catalogue_path, { :class=>"w3-bar-item w3-button" } %>
+    
+json.array! @phones, partial: 'phones/catalogue', as: :catalogue

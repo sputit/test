@@ -1,0 +1,195 @@
+##### run command at end## rails server -b $IP -p $PORT
+
+# Great tutorial # there are lots of omissions in sitepoint tutorial although similar
+# This scotch works ok and can use bootstrap for out styling !!!
+-- select here --
+rails new ClipUploader -T 
+cd ClipUploader
+
+# in gem file
+# Paperclip for uploader etc.
+gem 'bootstrap-sass'
+gem "paperclip", "~> 5.0.0"
+
+
+$ bundle install
+
+
+# Rename app/assets/stylesheets/application.css
+# To app/assets/stylesheets/application.scss and 
+# import the necessary files needed for Bootstrap to work.
+# app/assets/stylesheets/application.scss
+# in application.scss
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
+
+
+## SKIP
+## TO A##
+############## Skip to A##
+
+
+
+
+# need to add route... in routes.rb
+resources :cakes, only: [:new, :create, :index, :destroy]
+root to: 'cakes#index'
+
+#run
+##rails generate paperclip cake image
+
+
+########################
+# FOR INTEGRATION USE PAPERCLIP ITEM.. AS THIS THE TABLE WE WANT
+
+# using Products in proj
+
+
+rails generate paperclip product image
+
+
+
+## Default won't allow you rake db:migrate need to change generated code
+
+# in folder db/migrate  and file XXX_add_atttachment... the XXX represents a generate long number
+
+# after you creat paperclip but add [5.1]  the version of ruby not [5.1.5] just main version 
+class AddAttachmentImageToItems < ActiveRecord::Migration[5.1]
+  def self.up
+    change_table :photos do |t|
+      t.attachment :image
+    end
+  end
+
+  def self.down
+    remove_attachment :photos, :image
+  end
+end
+
+
+and it does work... :)
+
+
+
+# there is a attachment ruby file then generated
+#
+
+# RUN
+rake db:migrate
+
+# no equals sign show up?
+# SHOULD BE WHEN ADD [5.1] TO ADDATTACHMENT CLASS 
+
+# FOR INTEGRATION USE ITEM.RB INSTEAD OF PHOTO FILE
+models/item.rb
+
+[...]
+has_attached_file :image
+[...]
+
+models/photo.rb
+
+[...]
+validates_attachment :image,
+                     content_type: { content_type: ["image/jpeg", "image/gif", "image/png"] }
+[...]
+
+
+#AND ALTOGETHER IN MODELS/ITEM.RB FILE
+
+# MODELS/PRODUCT.RB IN PROJ
+
+  has_attached_file :image
+    #This validates the type of file uploaded. According to this, only images are allowed.
+  validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+  do_not_validate_attachment_file_type :image
+  validates_attachment :image, presence: true,
+  content_type: { content_type: "image/jpeg" },
+  size: { in: 0..1000.kilobytes }
+  
+  
+# END ITEM.RB FILE  
+
+Using your text editor, edit your PhotosController to look like what I have below:
+
+# DON'T HAVE TO DO ANYTHING TO CONTROLLERS?
+## SKIP TO ##B
+############ SKIP
+
+#### TO HERE
+##B
+
+# NEED TO CHANGE INDEX.HTML.ERB AND NEW.HTML.ERB IN VIEWS/ITEMS FOLDER
+
+####
+
+# CHANGE TOP PART OF _FORM WHICH IS BELONG TO NEW.HTML.ERB
+# TO
+<div class="page-header"><h1>Upload Photo</h1></div>
+
+<%= form_for @photo, html: { multipart: true } do |f| %>
+  <% if @photo.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= "#{pluralize(@photo.errors.count, "error")} prohibited this photo from being saved:" %>
+      </h2>
+      <ul>
+        <% @photo.errors.full_messages.each do |msg| %>
+          <li>
+            <%= msg %>
+          </li>
+          <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :title %>
+    <%= text_field :title, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :image %>
+    <%= f.file_field :image, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+        <%= f.submit 'Upload Photo', class: 'btn btn-default' %>
+    </div>
+<% end %>
+
+...
+
+...
+
+
+## DOE NOT SHOW BOTTOM OF FILE
+
+## NEED ALSO TO CHANGE ALL OTHE FILES FROM
+
+ FORM.LABEL ETC
+ TO
+ F.LABEL...
+
+## better change loop |f| to |form|
+
+
+
+
+# AND JUST THIS IN INDEX.HTML.ERB POSSIBLY WITOUT THE LINK
+ <%= link_to image_tag(photo.image.url, class: 'media-object'), photo.image.url, target: '_blank' %>
+
+
+GITHUB
+
+GIT INIT  [IF NOT ALREADY DONE AT START OF APP]]
+
+git add .
+git commit -m "integrated uploader using paperclip gem"
+git remote add origin https://github... whoever's project
+git push -u origin master
+
+git pull origin
+
+
+

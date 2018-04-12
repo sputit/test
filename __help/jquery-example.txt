@@ -1,0 +1,42 @@
+$('.btn-add-to-cart').hover(function(){
+     $('#notice').text('Cart is not working... This is jQuery message...').css({'display':'block','padding':'20px','background-color':'orange','color':'black','font-size':'2em'});;
+  });
+  
+  var ram = $('.ram').text();
+  if (ram > 2) 
+     $('.comment').text('This is good amount of RAM').css({'display':'block !important'});
+  else
+    $('.comment').text('Maybe check another phone for more RAM').css({'display':'block !important'});
+
+//= require jquery
+//= require jquery_ujs
+//= require custom_jquery
+
+
+
+$.noConflict();
+
+jQuery(document).ready(function($) {
+
+  function slideSwitch() {
+      var $active = $('#slideshow img.active');
+      if ( $active.length == 0 ) $active = $('#slideshow img:last');
+      var $next =  $active.next().length ? $active.next(): $('#slideshow img:first');
+      $active.addClass('last-active');
+      $next.css({opacity: 0.0}).addClass('active').animate({opacity: 1.0}, 1000, function() {
+              $active.removeClass('active last-active');
+      });
+  }
+  
+  $(function() {
+      setInterval( "slideSwitch()", 5000 );
+  });
+
+
+}); 
+
+<div id="slideshow">
+   <%= image_tag("banner-home.jpg",:class=>"active") %>
+   <%= image_tag("iphone8.jpg") %>
+</div>
+

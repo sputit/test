@@ -1,0 +1,470 @@
+### create a new app... :)
+
+rails new cakeBakeStore
+cd cakeBakeStore
+
+###########################
+
+# no harm using bundle install
+bundle install --without production 
+### not sure how to turn to productiion if needed
+# anyhow Liam says to use --without production [no space between -- and without]
+# ok done
+
+#############################
+
+#so if want to make static pages first then...
+
+
+
+# Now would like to have more than one page so add a menu
+
+# Create a STATIC page now for the home pages etc.
+# Have to do something to the controller
+
+# So we run the rails generate command BUT this time only for the CONTROLLER
+# Need to add the pages you want....
+# 4 pages home about catalog admin ro whatever pages needed except for ones generated 
+
+rails generate controller static_pages home about catalog admin
+
+# for now can add more later ... like registration page etc.. whatever in brief
+
+# it is possible only 2 static pages are needed are the other pages are created automatically
+
+#so the staticpages_controller.rb file is created
+#and there are 4 methods [for each menu item] 
+#that the routes.rb file will point to
+
+#in each of the methods add more info to the routes.rb file  ... :)
+## like this in static_pages_controller.rb
+
+ def home
+  end
+
+  def about
+  end
+
+  def catalog
+  end
+
+  def admin
+  end
+
+# Now after running the command rails generate controller staticpages home catalogue edit
+# The routes.rb in no longer empty [it was almost empty]  # routes.rb found in cofig/ folder
+
+# it now has also the following
+  get 'static_pages/home'
+  get 'static_pages/about'
+  get 'static_pages/catalog'
+  get 'static_pages/admin'
+
+# Cool :)
+
+
+# restart the server... run the app again
+rails server -b $IP -p $PORT
+
+# and the pages home etc are found at
+# /static_pages/home  .... etc at the end of the url in the browser
+# and sure enough the pages are there with info where in what folder file resides
+
+
+
+
+# Now to edit this page 
+# Go to the home.html.erb file... it's in the app/views/ folder and in the new static_pages folder that was created
+# And change it a bit [ there are only 4 files at the moment in static_pages folder home.html.erb, about.html.erb , catalog.html.erb and admin.html.erb
+
+<h1>Welcome to cake bake website</h1>
+<p>Hope you find a cake you love</p>
+
+# Now above the previous 2 lines on home.html.erb
+# embed some rubyonrails
+
+<%= provide(:title,'Home') %>
+
+# .. and gives the title
+# page looks like this...
+
+<%= provide(:title,'Home') %>
+<h1>Welcome to cake bake website</h1>
+<p>Hope you find a cake you love</p>
+
+
+
+
+# Now need to add the yield so that it shows in all pages
+# Go to the application.html.erb file in  # in the app/views/layouts folder
+
+# and in the html page add in <title></title> %yield  ... views/layouts folder
+<%= yield(:title) %>
+
+
+
+# now int application.html.erb 
+# put the %yield inside a div with a class for styling [inside the body tags]
+<div class="container">
+  <%= yield %>
+</div>
+    
+# now embed ruby into the links above div container
+ <li><%= link_to('Home', '#') %></li>
+ <li><%= link_to('About', '#') %></li>
+ <li><%= link_to('Catalog', '#') %></li> 
+ <li><%= link_to('Admin', '#') %></li> 
+# but don't put this in just go to ##HERE 
+
+
+# Now to make this work need to go to the controller
+# First have a look at the routes.rb in the config folder outside app folder
+
+# if you ran app it would show an error as the routes.rb stills shows
+# get 'static_pages/home'
+# get 'static_pages/catalogue'
+# get 'static_pages/edit'
+
+
+
+# remove the 'static_pages' and change to in the routes.rb file
+ get 'home', to:'static_pages#home'  # note the colon:
+  get 'about', to:'static_pages#about'
+  get 'catalog', to:'static_pages#catalog'
+  get 'admin', to:'static_pages#admin'
+  
+# but running this still shows error 
+# link to add the help_path in the links in the application.html.erb file
+
+##HERE  put this instead (make sure the home link is there too)
+
+<li><%= link_to "About", about_path %></li>
+<li><%= link_to "Catalog", catalog_path %></li>
+<li><%= link_to "Admin", admin_path %></li> 
+
+# but for the home page it is a bit different
+# have root_path instead of home_path as you would expect..
+
+<li><%= link_to "Home", root_path %></li>
+
+# to have something like 
+
+<header>
+  <ul>
+    <li><%= link_to "Home", root_path %></li>
+    <li><%= link_to "About", about_path %></li>
+    <li><%= link_to "Catalog", catalog_path %></li>
+    <li><%= link_to "Admin", admin_path %></li> 
+  </ul>
+</header>
+
+# and sure add the footer too... why not.. :)
+
+<footer>
+  <p>some text address etc. </p>
+</footer>
+
+## really in truth you would not add them there put straight away make the
+# _header.rb and _footer.rb partial files in the view/layouts folder
+
+# it's done below
+
+
+# AND REALLY IMPORTANT MUST CHANGE IT IN ROUTES.RB FILE
+
+# FROM:      get 'home', to:'static_pages#home'  # note the colon:
+# TO: 
+  root 'static_pages#home' ### very different to lines below :)
+  get 'about', to:'static_pages#about'
+  get 'catalogue', to:'static_pages#catalog'
+  get 'admin', to:'static_pages#admin'
+  
+
+
+# now to add partials to have main application.html.erb less cluttered
+
+# so have the page like this now...
+
+ <%= render('layouts/header') %> <!-- don't need :partial necessarily :) -->
+    <div class="container">
+      <%= yield %>
+    </div>
+    <%= render('layouts/footer') %>
+    
+# but first must create the partial files
+# go to app/view/layouts folder
+# create new file
+# rename as _header.html.erb
+# and same for _footer.html.erb
+
+# remove the header and footer and paste into the partial files.. _header.html.erb and _footer.html.erb
+
+# in the _header.html.erb
+# paste in
+<header class="headSec">
+  <h2>Some text in the header you want to display in all pages</h2>
+  <ul>
+    <li><%= link_to "Home", root_path %></li>
+    <li><%= link_to("Catalogue", catalogue_path) %></li>
+    <li><%= link_to("Edit", edit_path) %></li> ## replace with !!!* below
+  </ul>
+</header>
+
+# and for link that is already dynamic - not static_pages
+# !!!*
+<li><%= link_to("Phones", '/phones') %></li>  # THE FORWARD SLASH IS REQUIRED - ELSE WON'T START FROM ROOT BUT HAVE PHONES/PHONES
+
+
+### Add class if when you need for styling later wait for template that is going to be used
+# could use bootstrap... :)
+
+<%= link_to "Admin", '/phones', { :class=>"w3-bar-item w3-button" } %>  <!-- forward slash required -->
+
+### Add img
+<%=image_tag("gallery/Drawings/Plants vs Zombies.jpg")%>
+
+
+
+
+
+
+
+
+
+
+
+
+#####################################
+
+# Now bring in scaffold for the database etc.
+
+
+#rails generate scaffold phone make:string model:string price:decimal{10.2} description:text performance:string display:string ram:integer ref:string
+
+rails generate scaffold phone ref:string img:string make:string model:string price:decimal{10.2} description:text performance:string display:string ram:integer comment:text 
+
+rake db:migrate # THIS IS NEEDED TO CREATE THE SCHEMA RUBY FILE
+rake db:migrate db/schema.rb # NOTE: need the direrctory db/ in the command
+
+
+#and run
+rails server -b $IP -p $PORT
+
+#And that is for now to get started
+#To view just go to preview and go to url
+# /phones
+###########################
+
+
+
+#######
+# add just a column in the table
+#rails g migration add_column_name_to_table column_name:type
+
+rails generate migration add_img_to_phone img:string
+rake db:migrate
+rake db:migrate db/schema.rb
+
+# delete table
+rails generate migration drop_table :table_name
+
+############
+
+
+
+
+
+
+     <%=  #data = Phone.where("make = ?", params[:make])  %>
+     <%= #data.each do |phone| %>
+     <%=  #data = Phone.where( [:make] == "Apple") %> 
+    <%=  #data = Phone.select { |c| c[:make] == "Apple"} %> 
+
+
+
+
+
+#not working
+
+<% @phones.each do |phone| %>
+ <div class="w3-quarter">
+    <div class="img-phone"><%=image_tag(phone.img) %></div>
+    <div><div class="attrib-phone">Model</div><div class="val-phone"><%= phone.model %></div></div>
+    <div><div class="attrib-phone">Price</div><div class="val-phone"><%= phone.price %></div></div>
+    <div>
+       <!--<div class="btn-view-details"><%= link_to "View Details", phone_path, :id =>phone.id %>{ :class=>"w3-bar-item w3-button" } %></div>
+       
+       -->
+       <%= link_to "View Details", :controller => "phone",:action => "show", :id => phone.id %>
+
+       <%= #link_to item.description, :controller => "item",:action => "show", :id => item.id %>
+       <div class="btn-add-to-cart"><%= link_to "Add to Cart", compare_path, { :class=>"w3-bar-item w3-button" } %></div>
+    </div>
+ </div>
+<% end %>
+
+
+
+
+
+
+
+
+
+#### original show.html.erb
+
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Ref:</strong>
+  <%= @phone.ref %>
+</p>
+
+<p>
+  <strong>Img:</strong>
+  <%= @phone.img %>
+</p>
+
+<p>
+  <strong>Make:</strong>
+  <%= @phone.make %>
+</p>
+
+<p>
+  <strong>Model:</strong>
+  <%= @phone.model %>
+</p>
+
+<p>
+  <strong>Price:</strong>
+  <%= @phone.price %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @phone.description %>
+</p>
+
+<p>
+  <strong>Performance:</strong>
+  <%= @phone.performance %>
+</p>
+
+<p>
+  <strong>Display:</strong>
+  <%= @phone.display %>
+</p>
+
+<p>
+  <strong>Ram:</strong>
+  <%= @phone.ram %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= @phone.comment %>
+</p>
+
+<%= link_to 'Edit', edit_phone_path(@phone) %> |
+<%= link_to 'Back', phones_path %>
+
+
+
+
+#########################################################################
+
+
+
+cd ~/environment
+$ rails _5.1.4_ new sample_app #don't need number
+$ cd sample_app/
+
+$ rails generate scaffold registration firstname:string lastname:string email:string
+
+$ rake db:migrate # THIS IS NEEDED TO CREATE THE SCHEMA RUBY FILE
+$ rake db:migrate db/schema.rb # NOTE: need the direrctory db/ in the command
+
+$ rails server -b $IP -p $PORT
+
+###########################
+## LAST STEP:
+## CLICK ON PREVIEW
+## SELECT PREVIEW RUNNING APPLICATION
+## YOU CAN EXPAND THE VIEW TO SEE FULL VIEW OF APP
+
+## THE APP RUNS ON SERVER :)
+#############################
+
+
+## NOT PART OF THE APP
+##########root 'controller_name#action_name'
+##########$ root registrations_controller#registrations  # ?? inside route.rb file only?
+
+#ec2-user:~/environment/my_first_app (master) 
+$ ls app/controllers/
+#yields
+# >>  application_controller.rb  concerns  registrations_controller.rb
+
+#config/routes.rb file
+Rails.application.routes.draw do
+  resources :registrations
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+ root 'registrations_controller#registrations' ### ???
+end
+#########
+
+
+#bookstore
+rails generate model adverts name:string description:text price:decimal seller_id:integer email:string
+rake db:migrate
+
+#in seeds.rb file
+Advert.create(name:"Avensis",description:"lovely Avensis 2.0",price:2000,seller_id:1,email:"me@liammccabe.ie")
+
+#in controller file adverts..
+rak
+
+
+## Liam Blog app
+# limaBlog folder is created...
+
+# application.html.erb
+# ... is this already added?
+  <head>
+    <title>LiamBlog</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+# seed.rb #folder /db
+# schema.rb [just for viewing only] #folder /db
+# routes.rb #folder /config
+# add get 'adverts/:id' => 'adverts#show'
+# adverts_controller.rb #folder /bookstore/app/controllers/ # BOOKSTORE??? HUH?
+# show.html.erb #folder /bookstore/app/views/show.html.erb
+# add the follwing...
+ <head>
+        <title>Liam loves Rail</title>
+    </head>
+    <body>
+        <p>Name:<%=@ad.name%></p>
+        <p>Description:<%=@ad.description%></p>
+        <p>Price:<%=@ad.price%></p>
+        <p>Seller Id:<%=@ad.seller_id%></p>
+        <p>Email:<%=@ad.email%></p>
+    </body>
+
+rails new liamBlog
+rails generate scaffold blog author:string name:string blogtxt:text
+rake db:migrate
+rails server -b $IP -p $PORT
+
+
+
+
+

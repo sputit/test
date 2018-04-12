@@ -1,0 +1,89 @@
+$ cd ~/environment
+$ rails _5.1.4_ new sample_app #don't need number
+$ cd sample_app/
+
+$ rails generate scaffold registration firstname:string lastname:string email:string
+
+$ rake db:migrate # THIS IS NEEDED TO CREATE THE SCHEMA RUBY FILE
+$ rake db:migrate db/schema.rb # NOTE: need the direrctory db/ in the command
+
+$ rails server -b $IP -p $PORT
+
+###########################
+## LAST STEP:
+## CLICK ON PREVIEW
+## SELECT PREVIEW RUNNING APPLICATION
+## YOU CAN EXPAND THE VIEW TO SEE FULL VIEW OF APP
+
+## THE APP RUNS ON SERVER :)
+#############################
+
+
+## NOT PART OF THE APP
+##########root 'controller_name#action_name'
+##########$ root registrations_controller#registrations  # ?? inside route.rb file only?
+
+#ec2-user:~/environment/my_first_app (master) 
+$ ls app/controllers/
+#yields
+# >>  application_controller.rb  concerns  registrations_controller.rb
+
+#config/routes.rb file
+Rails.application.routes.draw do
+  resources :registrations
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+ root 'registrations_controller#registrations' ### ???
+end
+#########
+
+
+#bookstore
+rails generate model adverts name:string description:text price:decimal seller_id:integer email:string
+rake db:migrate
+
+#in seeds.rb file
+Advert.create(name:"Avensis",description:"lovely Avensis 2.0",price:2000,seller_id:1,email:"me@liammccabe.ie")
+
+#in controller file adverts..
+rak
+
+
+## Liam Blog app
+# limaBlog folder is created...
+
+# application.html.erb
+# ... is this already added?
+  <head>
+    <title>LiamBlog</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+# seed.rb #folder /db
+# schema.rb [just for viewing only] #folder /db
+# routes.rb #folder /config
+# add get 'adverts/:id' => 'adverts#show'
+# adverts_controller.rb #folder /bookstore/app/controllers/ # BOOKSTORE??? HUH?
+# show.html.erb #folder /bookstore/app/views/show.html.erb
+# add the follwing...
+ <head>
+        <title>Liam loves Rail</title>
+    </head>
+    <body>
+        <p>Name:<%=@ad.name%></p>
+        <p>Description:<%=@ad.description%></p>
+        <p>Price:<%=@ad.price%></p>
+        <p>Seller Id:<%=@ad.seller_id%></p>
+        <p>Email:<%=@ad.email%></p>
+    </body>
+
+rails new liamBlog
+rails generate scaffold blog author:string name:string blogtxt:text
+rake db:migrate
+rails server -b $IP -p $PORT
+

@@ -1,0 +1,88 @@
+# https://rubyonrailshelp.wordpress.com/2014/01/08/rails-4-simple-form-and-mail-form-to-make-contact-form/
+
+rails new contactForm
+cd contactForm
+
+# add gems to gemfile
+gem 'mail_form'
+gem 'simple_form'
+
+# and then run
+bundle install
+
+
+# routes.rb 
+match '/contacts',     to: 'contacts#new',             via: 'get'
+resources "contacts", only: [:new, :create]
+
+root to: 'contacts#new'
+resources "contacts", only: [:new, :create]
+
+#rails generate controller Contacts
+
+Use `rails generate simple_form:install` to generate the Simple Form configuration.
+rails generate simple_form:install
+# need to rerun with bootstrap
+rails generate simple_form:install --bootstrap
+
+# and this creates the Contacts controller
+
+# paste into ContactsController
+def new
+    @contact = Contact.new
+  end
+
+  def create
+    @contact = Contact.new(params[:contact])
+    @contact.request = request
+    if @contact.deliver
+      flash.now[:notice] = 'Thank you for your message. We will contact you soon!'
+    else
+      flash.now[:error] = 'Cannot send message.'
+      render :new
+    end
+  end
+  
+  
+  # and in the app/model/contacts.rb file add
+  
+  # first the model has to be created
+
+rails generate model Contact name:string email:string message:text nickname:string
+# need to have bootstrap option  # see rails generate simple_form:install --bootstrap above
+
+
+# and then
+rake db:migrate
+
+# contact.rb that is created shows
+
+class Contact < ApplicationRecord
+    
+end
+
+
+# change to... note MailFor instead of ApplicationRecord
+
+class Contact < MailForm::Base
+  attribute :name,      :validate => true
+  attribute :email,     :validate => /\A([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})\z/i
+  attribute :message
+  attribute :nickname,  :captcha  => true
+
+  # Declare the e-mail headers. It accepts anything the mail method
+  # in ActionMailer accepts.
+  def headers
+    {
+      :subject => "My Contact Form",
+      :to => "your_email@example.org",
+      :from => %("#{name}" <#{email}>)
+    }
+  end
+end
+
+
+# and run
+rails server -b $IP -p $PORT
+# view url at
+/contacts

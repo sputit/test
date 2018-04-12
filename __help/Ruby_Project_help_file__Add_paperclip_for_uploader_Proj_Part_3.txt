@@ -1,0 +1,118 @@
+rails new SimpleUploader
+cd SimpleclipUploader
+
+# in gem file
+# Paperclip for uploader etc.
+gem "paperclip", "~> 4.3.7"
+gem 'bootstrap-sass', '~> 2.0.2'
+
+
+$ bundle install
+
+
+# in application.scss
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
+
+# look at creating main.scss file instead and see tut
+# scaffolds.scss file?
+
+@import "base/mixins.scss";
+@import "base/normalize.scss";
+@import "base/globals.scss";
+@import "styles/home.scss";
+@import "styles/posts.scss";
+
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
+
+
+
+
+#rails g model Photo title:string
+#rails generate model Photo title:string
+
+rails generate scaffold Photo title:string
+# hangs try
+spring stop  # stops running and can then again use the commands
+
+rake db:migrate
+
+rails generate controller Photo #??
+rails generate scaffold Photo # ??
+
+
+# rollbacks if needed...
+rails destroy scaffold MyFoo
+rails destroy controller MyFoo
+rails destroy model MyFoo
+
+
+# need to add route... in routes.rb
+resources :photos, only: [:new, :create, :index, :destroy]
+root to: 'photos#index'
+
+#run
+rails generate paperclip photo image
+
+# there is a attachment ruby file then generated
+#
+rake db:migrate
+# no equals sign show up?
+
+
+models/photo.rb
+
+[...]
+has_attached_file :image
+[...]
+
+models/photo.rb
+
+[...]
+validates_attachment :image,
+                     content_type: { content_type: ["image/jpeg", "image/gif", "image/png"] }
+[...]
+
+
+
+photos_controller.rb 
+# or leave default for now
+
+class PhotosController < ApplicationController
+  def index
+    @photos = Photo.order('created_at')
+  end
+
+  def new
+    @photo = Photo.new
+  end
+
+  def create
+    @photo = Photo.new(photo_params)
+    if @photo.save
+      flash[:success] = "The photo was added!"
+      redirect_to root_path
+    else
+      render 'new'
+    end
+  end
+
+  private
+
+  def photo_params
+    params.require(:photo).permit(:image, :title)
+  end
+end
+
+
+# photos index.html.erb views/photos folder
+<div class="page-header"><h1>Photos</h1></div>
+
+<%= render @photos %>
+
+
+
+# add thumbnails
+
+rake paperclip:refresh CLASS=Photo

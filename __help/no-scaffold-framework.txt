@@ -1,0 +1,102 @@
+#This creates an App without SCAFFOLD
+
+# from the very start
+rails new carStoreApp
+cd carStoreApp
+rails generate model adverts name:string description:text price:decimal seller_id:integer email:string
+
+# now create the schema.rb file by running rake 
+rake db:migrate  
+
+## if you see a lot of ======== then this is good... :)
+
+# now into seeds.rb directly as making a MODEL of our own... :)
+# open seed.rb in the db folder
+# now the add the line about end of the comments #
+
+Advert.create(name:"Avensis",description:"lovely Avensis 2.0",price:2000,seller_id:1,email:"me@liammccabe.ie")
+
+# good idea not to have any spaces... as spaces in the wrong place can lead to errors... :(
+# and save this seeds.rb file...
+
+# now run the rake command again # seed and seeds here :)
+rake db:seed
+
+#########
+## and then again??
+### NO.. 
+## Had add instead of ad in adverts_controller.rb file
+##rake db:migrate db/schema.rb # NOTE: need the direrctory db/ in the command
+
+
+# no error... :) then proceed...
+
+# need to add code the routes.rb file... it's in the config folder
+# open the config folder
+# open the routes.rb file...
+# add the line 
+get 'adverts/:id' => 'adverts#show'
+# just before the 'end' word in the file
+# and save..
+
+# now need to generate the adverts controller..
+
+# now run the command
+rails generate controller adverts # possibly could use g instead of generate??/
+# note the adverts is in plural exactly as written in the get statement above in the routes.rb
+# this is the page url address where the page will be found
+
+# and the now the adverts_controller.rb appears in the controllers folder :)
+
+##############
+## REALLY IMPORTANT :)
+## need to add this code into the adverts_controller.rb file @@@
+## inside the class
+    def show
+        @ad = Advert.find(params[:id])
+    end
+##############
+## originally had two ds in ad = add ........... :(
+## and save... :)
+
+
+# need to create a new file and name it as show.html.rb
+# now you need to open the app folder at the top
+# then open the views folder
+# the advert folder is now here that you just created
+
+# then create new file in the adverts folder and rename it as show.html.erb file
+# .erb it is a html with ruby embedded...
+# the adverts folder was originally empty
+# and add the following code..
+
+<head>
+    <title>Liam loves Rail</title>
+</head>
+<body>
+    <p>Name:<%=@ad.name%></p>
+    <p>Description:<%=@ad.description%></p>
+    <p>Price:<%=@ad.price%></p>
+    <p>Seller Id:<%=@ad.seller_id%></p>
+    <p>Email:<%=@ad.email%></p>
+</body>
+
+## above code to be put in the show.html.erb
+# and save
+
+###############
+## Need to run the program by typing
+rails server -b $IP -p $PORT
+
+# click on Preview at the top menu and choose Preview Running Application
+
+
+## but it won't show the App and needs to tell the controller where to point the page...
+## hit Alt + T to exit terminal
+
+## no we did add the get code in routes.rb file
+## just need to know what the url name is 
+## 
+advert/1
+
+

@@ -1,0 +1,46 @@
+git rm db/*.sqlite3
+git commit -m "Removing SQLite files from git"
+rm .gitignore
+wget https://raw.githubusercontent.com/github/gitignore/master/Rails.gitignore
+mv Rails.gitignore .gitignore
+git add .gitignore
+git commit -m "Ignoring files that Rails recommends"
+
+
+
+
+…or create a new repository on the command line
+cd Bakery
+echo "# test git" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/sputit/test.git
+
+
+########## the way
+
+
+I had enough ruby for tonight, but I will try to do a bit of coding while it is fresh and add functionality to categories :)
+You need to create new branch (you created a test branch already)
+$ git checkout -b testBranch # stay in your branch directory #yes
+$ git status
+$ git add .  #yes
+$ git commit -m "your message" #yes
+
+git push https://github.com/sputit/test.git testBranch #yes
+git push https://github.com/sputit/test.git testBranchBak
+username
+password
+
+to merge:
+$ git checkout master - @masterfile when merging
+$ git merge yourBranchName 
+$ git push origin master
+username
+password
+
+
+I hope this answers your question, let me know if this is not what you asked for.
+
+Regards,

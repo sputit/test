@@ -1,0 +1,176 @@
+# Great tutorial # there are lots of omissions in sitepoint tutorial although similar
+# This scotch works ok and can use bootstrap for out styling !!!
+https://scotch.io/tutorials/file-upload-in-rails-with-paperclip
+
+rails new ClipUploader -T 
+cd ClipUploader
+
+# in gem file
+# Paperclip for uploader etc.
+gem 'bootstrap-sass'
+gem "paperclip", "~> 5.0.0"
+
+
+$ bundle install
+
+
+# Rename app/assets/stylesheets/application.css to app/assets/stylesheets/application.scss and 
+# import the necessary files needed for Bootstrap to work.
+
+#app/assets/stylesheets/application.scss
+
+# in application.scss
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
+
+
+
+## Default won't allow you rake db:migrate need to change generated code
+
+# in folder db/migrate  and file XXX_add_atttachment... the XXX represents a generate long number
+
+# after you creat paperclip but add [5.1]  the version of ruby not [5.1.5] just main version 
+class AddAttachmentImageToPhotos < ActiveRecord::Migration[5]
+  def self.up
+    change_table :photos do |t|
+      t.attachment :image
+    end
+  end
+
+  def self.down
+    remove_attachment :photos, :image
+  end
+end
+
+
+and it does work... :)
+
+
+
+
+
+
+#rails g model Photo title:string
+
+
+rails generate model Photo title:string
+
+
+# hangs try
+spring stop  # stops running and can then again use the commands
+
+rake db:migrate
+
+rails generate controller Photos
+
+# rollbacks if needed...
+rails destroy scaffold MyFoo
+rails destroy controller MyFoo
+rails destroy model MyFoo
+
+
+# need to add route... in routes.rb
+resources :photos, only: [:new, :create, :index, :destroy]
+root to: 'photos#index'
+
+#run
+rails generate paperclip photo image
+
+# there is a attachment ruby file then generated
+#
+rake db:migrate
+# no equals sign show up?
+
+
+models/photo.rb
+
+[...]
+has_attached_file :image
+[...]
+
+models/photo.rb
+
+[...]
+validates_attachment :image,
+                     content_type: { content_type: ["image/jpeg", "image/gif", "image/png"] }
+[...]
+
+
+Using your text editor, edit your PhotosController to look like what I have below:
+
+ #app/controllers/photos_controller.rb
+
+ class PhotosController < ApplicationController
+
+ #Index action, photos gets listed in the order at which they were created
+ def index
+  @photos = Photo.order('created_at')
+ end
+
+ #New action for creating a new photo
+ def new
+  @photo = Photo.new
+ end
+
+ #Create action ensures that submitted photo gets created if it meets the requirements
+ def create
+  @photo = Photo.new(photo_params)
+  if @photo.save
+   flash[:notice] = "Successfully added new photo!"
+   redirect_to root_path
+  else
+   flash[:alert] = "Error adding new photo!"
+   render :new
+  end
+ end
+
+ private
+
+ #Permitted parameters when creating a photo. This is used for security reasons.
+ def photo_params
+  params.require(:photo).permit(:title, :image)
+ end
+
+end
+
+In the above controller, we created three actions. The new and create actions are used when a photo is to be uploaded. If the photo gets saved the user is redirected to the root_path, else the new page is rendered.
+
+Let us generate our Photo model.
+
+rails generate model Photo title:string
+
+Migrate your database:
+
+rake db:migrate 
+
+We need to add a few attributes to the photos table. To do that we will make use of the generator provided by Paperclip. Run the command below from your terminal.
+
+rails generate paperclip photo image
+
+This will generate a new migration file that looks like this:
+
+#xxxxxxxx_add_attachment_image_to_photos.rb
+
+class AddAttachmentImageToPhotos < ActiveRecord::Migration
+  def self.up
+    change_table :photos do |t|
+      t.attachment :image
+    end
+  end
+
+  def self.down
+    remove_attachment :photos, :image
+  end
+end
+
+Now run the migration.
+
+rake db:migrate
+
+Open up your Photo model to add PaperClip functionality.
+
+#app/models/photo.rb
+
+...
+  #Mounts paperclip image
+  has_attached_file :image

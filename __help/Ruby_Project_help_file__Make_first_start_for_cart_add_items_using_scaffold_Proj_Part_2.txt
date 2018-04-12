@@ -1,0 +1,73 @@
+rails new cakeBakeStoreII
+cd cakeBakeStoreII
+
+# need to decide what kind of information we need to show and query in the finsihed project
+# need to add for gluten-free so that is searchable..
+
+# need image, category, title, desription, price
+
+# but definitely as Liam is really tough marker
+# i think we would need a file uploader so that we don't have 
+# add images by hand into the image folder each time
+
+# have to look that it is a good UX experience for the admin/client person
+# who has to add new cakes each time
+
+# might need id but maybe rails has it already covered
+
+#rails generate scaffold item image:string title:string category:string description:text price:decimal glutenfree:boolean icing:boolean filling:string other:string
+
+rails generate scaffold item image:string title:string category:string description:text price:decimal glutenfree:boolean icing:boolean filling:string other:string
+
+# let's make the database...
+
+rake db:migrate # THIS IS NEEDED TO CREATE THE SCHEMA RUBY FILE
+rake db:migrate db/schema.rb # NOTE: need the direrctory db/ in the command
+
+## handy undo commands
+
+rake db:rollback
+
+#You can create scaffolding using:
+rails generate scaffold MyFoo 
+
+#(or similar), and you can destroy/undo it using 
+rails destroy scaffold MyFoo
+
+rails destroy controller MyFoo
+rails destroy model MyFoo
+
+
+#and run
+rails server -b $IP -p $PORT
+
+
+##########################
+
+#and go to /items
+
+# need to populate the forms made 
+
+
+
+
+##################################
+
+# link image in loop
+
+        <%= link_to (image_tag item.image, :class => "itemho"), item %>
+
+#################################
+
+
+#and  so that's all for that part :)
+
+
+
+# liam also adde a background image and he used a pipe
+# in images folder create a new folder called Site [has to have a capital S]
+# drag any image into the Site folder
+
+# also had a class to the header tage in _header.html.erb or whatever place you want a background image
+# and in any css file even the application.css file put say
+.bk-image { background: url('/assets/Site/technology-background.jpg'); background-size: 100%; width: 100%; }
